@@ -22,35 +22,50 @@ async function populateBreeds() {
     });
   } catch (error) {
       console.log(error);
-    // console.error('Error fetching breeds:', err);
+      console.error('Error fetching breeds:', error);
     // showError();
   }
 }
 
 refs.breedSelect.addEventListener('change', onSelectChange);
 
-async function createMarkupCatInfo(breedId) {
-    try {
-        const catData = await fetchCatByBreed(breedId);
-      console.log(catData);
-      const cat = catData[0].breeds[0];
-      console.log(cat);
 
-    } catch (error) {
-        
-    }
-}
 
 function onSelectChange(event) {
- 
-  const breedId = refs.breedSelect.value;
-  console.log(breedId);
-  createMarkupCatInfo(breedId);
+
+  const selectedBreedId = refs.breedSelect.value;
+
+  // refs.loader.style.display = 'block';
+  console.log(selectedBreedId);
+  refs.catContainer.innerHTML = '';
+
+  fetchCatByBreed(selectedBreedId).then(catData => {
+    if (catData.length > 0) {
+      const cat = catData[0].breeds[0];
+
+      const markup = `
+        <img src="${catData[0].url}" alt="${cat.name}" width="500">
+        <div class="cat">
+        <h2>${cat.name}</h2>
+        <p>${cat.description}</p>
+        <p><b>Temperament: </b>${cat.temperament}</p>
+        </div>`;
+      
+      refs.catContainer.innerHTML = markup;
+
+    }
+  })
+    .catch(error => {
+    console.log(error);
+    })
+    .finally(() => {
+      refs.loader.style.display = 'none';
+  })
 }
 
-onSelectChange()
 
-populateBreeds()
+
+populateBreeds();
 
 
 
