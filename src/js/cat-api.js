@@ -26,8 +26,8 @@ export async function fetchCatByBreed(breedId) {
     return response.data;
       
   } catch (error) {
-    console.log(error);;
+    throw error;
   }
 }
-fetchCatByBreed('abys')
+
 
