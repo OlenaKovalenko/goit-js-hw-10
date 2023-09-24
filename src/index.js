@@ -6,6 +6,7 @@ import { fetchBreeds, fetchCatByBreed } from "./js/cat-api";
 const API_KEY = 'live_YTqB5AQK3y8JmuwMxWLdV8FRrbjmoQSZXIXMtHq4AaiYfbac3to6mAJHli551rkd';
 
 axios.defaults.headers.common["x-api-key"] = API_KEY;
+// refs.breedSelect.style.display = 'none';
 
 
 async function populateBreeds() {
@@ -15,7 +16,7 @@ async function populateBreeds() {
       const option = document.createElement('option');
       option.value = breed.id;
       option.textContent = breed.name;
-      refs.select.appendChild(option);
+      refs.breedSelect.appendChild(option);
     });
   } catch (error) {
       console.log(error);
