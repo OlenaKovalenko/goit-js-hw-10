@@ -4,32 +4,33 @@ import { refs } from "./refs";
 import { fetchBreeds, fetchCatByBreed } from "./cat-api";
 import { createMarkupCatInfo } from "./cat-markup";
 
-const API_KEY = 'live_YTqB5AQK3y8JmuwMxWLdV8FRrbjmoQSZXIXMtHq4AaiYfbac3to6mAJHli551rkd';
+refs.loader.style.display = 'none';
+refs.error.style.display = 'none';
+refs.catContainer.setAttribute('hidden', '');
 
-axios.defaults.headers.common["x-api-key"] = API_KEY;
-// refs.breedSelect.style.display = 'none';
+function showError() {
+  refs.error.style.display = 'block';
+}
 
-
+function hiddenLoader() {
+  refs.loader.style.display = 'none';
+}
 
 async function populateBreeds() {
   try {
+   
     const breeds = await fetchBreeds();
-    breeds.forEach((breed) => {
-      const option = document.createElement('option');
-      option.value = breed.id;
-      option.textContent = breed.name;
-      refs.breedSelect.appendChild(option);
-    });
+    const markupOption = breeds.map(({ name, id }) => `
+    <option value="${id}">${name}</option>`
+    ).join('');
+    refs.breedSelect.insertAdjacentHTML('afterbegin', markupOption);
   } catch (error) {
-      console.log(error);
       console.error('Error fetching breeds:', error);
-    // showError();
+      showError();
   }
 }
 
 refs.breedSelect.addEventListener('change', onSelectChange);
-
-
 
 // function onSelectChange(event) {
 
@@ -65,18 +66,32 @@ refs.breedSelect.addEventListener('change', onSelectChange);
 
 async function onSelectChange(event) {
   event.preventDefault();
+  refs.catContainer.innerHTML = '';
 
   const selectedBreedId = event.currentTarget.value;
-  const response = await fetchCatByBreed(selectedBreedId);
-  const catData = response[0];
 
-  const markup = createMarkupCatInfo(catData);
-  refs.catContainer.innerHTML = markup;
+  try {
+    const response = await fetchCatByBreed(selectedBreedId);
+    refs.loader.style.display = 'block';
+    if (response.length > 0) {
+      const catData = response[0];
+
+      const markup = createMarkupCatInfo(catData);
+      refs.catContainer.removeAttribute('hidden');
+      refs.catContainer.innerHTML = markup;
+      
+    }
+    
+  } catch (error) {
+    console.log(error);
+    showError();
+    
+  }
+ 
 }
 
 
-
-populateBreeds();
+populateBreeds().then(hiddenLoader);
 
 
 
