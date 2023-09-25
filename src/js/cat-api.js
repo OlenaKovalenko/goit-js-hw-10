@@ -5,7 +5,6 @@ const BASE_URL = "https://api.thecatapi.com/v1";
 
 axios.defaults.headers.common["x-api-key"] = API_KEY;
 
-
 export async function fetchBreeds() {
   try {
     const response = await axios.get(`${BASE_URL}/breeds`);

@@ -1,5 +1,3 @@
-// import { fetchCatByBreed } from "./cat-api";
-
 export function createMarkupCatInfo({url, breeds: {0: {name, description, temperament}}}) {
     return `
         <img src="${url}" alt="${name}" width="500">

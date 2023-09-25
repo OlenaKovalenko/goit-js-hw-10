@@ -1,5 +1,7 @@
 import axios from "axios";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import SlimSelect from 'slim-select';
+import "/node_modules/slim-select/dist/slimselect.css";
 
 import { refs } from "./refs";
 import { fetchBreeds, fetchCatByBreed } from "./cat-api";
@@ -10,6 +12,7 @@ refs.error.style.display = 'none';
 refs.catContainer.setAttribute('hidden', '');
 
 function showError() {
+  refs.error.classList.remove('visually-hidden');
   refs.error.style.display = 'block';
 }
 
@@ -19,85 +22,52 @@ function hiddenLoader() {
 
 async function populateBreeds() {
   try {
-    
     const breeds = await fetchBreeds();
     const markupOption = breeds.map(({ name, id }) => `
     <option value="${id}">${name}</option>`
     ).join('');
+
     refs.breedSelect.insertAdjacentHTML('afterbegin', markupOption);
+
+    new SlimSelect({
+      select: '.breed-select',
+    });
+
   } catch (error) {
-      refs.breedSelect.style.display = 'none';
-      Notify.failure('Error fetching breeds:', error);
+      refs.breedSelect.classList.add('visually-hidden');
+
+      Notify.failure('Error fetching cat info: ', error);
       showError();
   }
 }
 
 refs.breedSelect.addEventListener('change', onSelectChange);
 
-// function onSelectChange(event) {
-
-//   const selectedBreedId = refs.breedSelect.value;
-
-//   // refs.loader.style.display = 'block';
-//   console.log(selectedBreedId);
-//   refs.catContainer.innerHTML = '';
-
-//   fetchCatByBreed(selectedBreedId).then(catData => {
-//     if (catData.length > 0) {
-//       const cat = catData[0].breeds[0];
-
-//       const markup = `
-//         <img src="${catData[0].url}" alt="${cat.name}" width="500">
-//         <div class="cat">
-//         <h2>${cat.name}</h2>
-//         <p>${cat.description}</p>
-//         <p><b>Temperament: </b>${cat.temperament}</p>
-//         </div>`;
-      
-//       refs.catContainer.innerHTML = markup;
-
-//     }
-//   })
-//     .catch(error => {
-//     console.log(error);
-//     })
-//     .finally(() => {
-//       refs.loader.style.display = 'none';
-//   })
-// }
-
-async function onSelectChange(event) {
+function onSelectChange(event) {
   event.preventDefault();
   refs.catContainer.innerHTML = '';
 
+  refs.loader.style.display = 'block';
   const selectedBreedId = event.currentTarget.value;
 
-  try {
-    const response = await fetchCatByBreed(selectedBreedId);
-    refs.loader.style.display = 'block';
-    // if (response.length > 0) {
-      const catData = response[0];
+  fetchCatByBreed(selectedBreedId).then(response => {
+    
+    const catData = response[0];
+    const markup = createMarkupCatInfo(catData);
 
-      const markup = createMarkupCatInfo(catData);
-      refs.catContainer.removeAttribute('hidden');
-      refs.catContainer.innerHTML = markup;
-      
-    // } else {
-    //     refs.error.style.display = 'block';         
-    //     refs.breedSelect.style.display = 'none'; 
-    // }
-    
-    
-  } catch (error) {
-     Notify.failure('Error fetching breeds:', error);
-    // refs.error.style.display = 'block';         
-    refs.breedSelect.style.display = 'none'; 
+    refs.catContainer.removeAttribute('hidden');
+    refs.catContainer.innerHTML = markup;
+  })
+    .catch(error => {
+    Notify.failure('Error fetching cat info: ', error);
+    refs.breedSelect.classList.add('visually-hidden');
     showError();
-    
-  }
- 
+  })
+    .finally(() => {
+      refs.loader.style.display = 'none';
+    })
+  
 }
-
 
 populateBreeds().then(hiddenLoader);
 
