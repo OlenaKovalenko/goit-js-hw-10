@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { refs } from "./refs";
 import { fetchBreeds, fetchCatByBreed } from "./cat-api";
-// import { createMarkupCatInfo } from "./cat-markup";
+import { createMarkupCatInfo } from "./cat-markup";
 
 const API_KEY = 'live_YTqB5AQK3y8JmuwMxWLdV8FRrbjmoQSZXIXMtHq4AaiYfbac3to6mAJHli551rkd';
 
@@ -31,36 +31,47 @@ refs.breedSelect.addEventListener('change', onSelectChange);
 
 
 
-function onSelectChange(event) {
+// function onSelectChange(event) {
 
-  const selectedBreedId = refs.breedSelect.value;
+//   const selectedBreedId = refs.breedSelect.value;
 
-  // refs.loader.style.display = 'block';
-  console.log(selectedBreedId);
-  refs.catContainer.innerHTML = '';
+//   // refs.loader.style.display = 'block';
+//   console.log(selectedBreedId);
+//   refs.catContainer.innerHTML = '';
 
-  fetchCatByBreed(selectedBreedId).then(catData => {
-    if (catData.length > 0) {
-      const cat = catData[0].breeds[0];
+//   fetchCatByBreed(selectedBreedId).then(catData => {
+//     if (catData.length > 0) {
+//       const cat = catData[0].breeds[0];
 
-      const markup = `
-        <img src="${catData[0].url}" alt="${cat.name}" width="500">
-        <div class="cat">
-        <h2>${cat.name}</h2>
-        <p>${cat.description}</p>
-        <p><b>Temperament: </b>${cat.temperament}</p>
-        </div>`;
+//       const markup = `
+//         <img src="${catData[0].url}" alt="${cat.name}" width="500">
+//         <div class="cat">
+//         <h2>${cat.name}</h2>
+//         <p>${cat.description}</p>
+//         <p><b>Temperament: </b>${cat.temperament}</p>
+//         </div>`;
       
-      refs.catContainer.innerHTML = markup;
+//       refs.catContainer.innerHTML = markup;
 
-    }
-  })
-    .catch(error => {
-    console.log(error);
-    })
-    .finally(() => {
-      refs.loader.style.display = 'none';
-  })
+//     }
+//   })
+//     .catch(error => {
+//     console.log(error);
+//     })
+//     .finally(() => {
+//       refs.loader.style.display = 'none';
+//   })
+// }
+
+async function onSelectChange(event) {
+  event.preventDefault();
+
+  const selectedBreedId = event.currentTarget.value;
+  const response = await fetchCatByBreed(selectedBreedId);
+  const catData = response[0];
+
+  const markup = createMarkupCatInfo(catData);
+  refs.catContainer.innerHTML = markup;
 }
 
 
