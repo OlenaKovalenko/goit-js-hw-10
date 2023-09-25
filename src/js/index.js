@@ -1,10 +1,11 @@
 import axios from "axios";
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 import { refs } from "./refs";
 import { fetchBreeds, fetchCatByBreed } from "./cat-api";
 import { createMarkupCatInfo } from "./cat-markup";
 
-refs.loader.style.display = 'none';
+refs.loader.style.display = 'block';
 refs.error.style.display = 'none';
 refs.catContainer.setAttribute('hidden', '');
 
@@ -18,14 +19,15 @@ function hiddenLoader() {
 
 async function populateBreeds() {
   try {
-   
+    
     const breeds = await fetchBreeds();
     const markupOption = breeds.map(({ name, id }) => `
     <option value="${id}">${name}</option>`
     ).join('');
     refs.breedSelect.insertAdjacentHTML('afterbegin', markupOption);
   } catch (error) {
-      console.error('Error fetching breeds:', error);
+      refs.breedSelect.style.display = 'none';
+      Notify.failure('Error fetching breeds:', error);
       showError();
   }
 }
@@ -73,17 +75,23 @@ async function onSelectChange(event) {
   try {
     const response = await fetchCatByBreed(selectedBreedId);
     refs.loader.style.display = 'block';
-    if (response.length > 0) {
+    // if (response.length > 0) {
       const catData = response[0];
 
       const markup = createMarkupCatInfo(catData);
       refs.catContainer.removeAttribute('hidden');
       refs.catContainer.innerHTML = markup;
       
-    }
+    // } else {
+    //     refs.error.style.display = 'block';         
+    //     refs.breedSelect.style.display = 'none'; 
+    // }
+    
     
   } catch (error) {
-    console.log(error);
+     Notify.failure('Error fetching breeds:', error);
+    // refs.error.style.display = 'block';         
+    refs.breedSelect.style.display = 'none'; 
     showError();
     
   }
