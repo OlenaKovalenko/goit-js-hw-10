@@ -48,6 +48,7 @@ function onSelectChange(event) {
   refs.catContainer.innerHTML = '';
 
   refs.loader.style.display = 'block';
+  refs.error.style.display = 'none';
   refs.breedSelect.classList.remove('visually-hidden');
   const selectedBreedId = event.currentTarget.value;
 
@@ -60,8 +61,7 @@ function onSelectChange(event) {
     refs.catContainer.innerHTML = markup;
   })
     .catch(error => {
-    // Notify.failure('Error fetching cat info: ', error);
-    // refs.breedSelect.classList.add('visually-hidden');
+  
     showError();
   })
     .finally(() => {
