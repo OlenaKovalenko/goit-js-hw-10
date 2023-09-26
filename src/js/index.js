@@ -16,7 +16,7 @@ function showError() {
   refs.error.style.display = 'block';
 }
 
-function hiddenLoader() {
+function hideLoader() {
   refs.loader.style.display = 'none';
 }
 
@@ -28,7 +28,7 @@ async function populateBreeds() {
     ).join('');
 
     refs.breedSelect.insertAdjacentHTML('afterbegin', markupOption);
-
+    refs.breedSelect.classList.remove('visually-hidden');
     new SlimSelect({
       select: '.breed-select',
     });
@@ -69,7 +69,7 @@ function onSelectChange(event) {
   
 }
 
-populateBreeds().then(hiddenLoader);
+populateBreeds().then(hideLoader);
 
 
 
