@@ -4,8 +4,9 @@
   margin-top: 20px;
 }
 
-.breed-select {
+#breed-select {
   font-size: 24px;
+  width: 250px;
 }
 
 .visually-hidden {
