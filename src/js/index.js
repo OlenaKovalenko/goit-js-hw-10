@@ -48,6 +48,7 @@ function onSelectChange(event) {
   refs.catContainer.innerHTML = '';
 
   refs.loader.style.display = 'block';
+  refs.breedSelect.classList.remove('visually-hidden');
   const selectedBreedId = event.currentTarget.value;
 
   fetchCatByBreed(selectedBreedId).then(response => {
