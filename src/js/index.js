@@ -60,8 +60,8 @@ function onSelectChange(event) {
     refs.catContainer.innerHTML = markup;
   })
     .catch(error => {
-    Notify.failure('Error fetching cat info: ', error);
-    refs.breedSelect.classList.add('visually-hidden');
+    // Notify.failure('Error fetching cat info: ', error);
+    // refs.breedSelect.classList.add('visually-hidden');
     showError();
   })
     .finally(() => {
