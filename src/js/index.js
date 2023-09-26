@@ -30,7 +30,7 @@ async function populateBreeds() {
     refs.breedSelect.insertAdjacentHTML('afterbegin', markupOption);
     refs.breedSelect.classList.remove('visually-hidden');
     new SlimSelect({
-      select: '.breed-select',
+      select: '#breed-select',
     });
 
   } catch (error) {
